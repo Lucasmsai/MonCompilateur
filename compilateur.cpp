@@ -30,27 +30,36 @@ void ReadChar(void){		// Read character and skip spaces until
 				// non space character is read
 	while(cin.get(current) && (current==' '||current=='\t'||current=='\n'))
 	   	cin.get(current);
+		// Lire des caractere en evitant les tabulation ou espace ou saut a la ligne
 }
 
 void Error(string s){
-	cerr<< s << endl;
+	cerr<< s << endl;  // Sortie standar d'erreur (a faire) // jamais faire sur cout
 	exit(-1);
 }
 
 // ArithmeticExpression := Term {AdditiveOperator Term}
-// Term := Digit | "(" ArithmeticExpression ")"
-// AdditiveOperator := "+" | "-"
+
+
 // Digit := "0"|"1"|"2"|"3"|"4"|"5"|"6"|"7"|"8"|"9"
 
-	
+// Mettre toute les regle de grammaire pour savoir
+
+// AdditiveOperator := "+" | "-"
 void AdditiveOperator(void){
+	// Premiere spposition, current = non terminal
+	// Mais verifie si on a bien un operateur additif
 	if(current=='+'||current=='-')
 		ReadChar();
+		// Passe la main, pointe current sur le prochain
+		// Traite que ce qui lui appartient
 	else
 		Error("Opérateur additif attendu");	   // Additive operator expected
+		// Dire ce que l'on attend
 }
 		
 void Digit(void){
+	// Pareil, empile le chiffre qu'il la eu
 	if((current<'0')||(current>'9'))
 		Error("Chiffre attendu");		   // Digit expected
 	else{
@@ -60,8 +69,12 @@ void Digit(void){
 }
 
 void ArithmeticExpression(void);			// Called by Term() and calls Term()
+// Vide, pour terminer du recursif
+
+// Term := Digit | "(" ArithmeticExpression ")"
 
 void Term(void){
+	// Analyse predictive
 	if(current=='('){
 		ReadChar();
 		ArithmeticExpression();
@@ -77,7 +90,9 @@ void Term(void){
 			Error("'(' ou chiffre attendu");
 }
 
+
 void ArithmeticExpression(void){
+	// utilisation de entete, defni term avant
 	char adop;
 	Term();
 	while(current=='+'||current=='-'){
@@ -104,9 +119,10 @@ int main(void){	// First version : Source code on standard input and assembly co
 	cout << "\tmovq %rsp, %rbp\t# Save the position of the stack's top"<<endl;
 
 	// Let's proceed to the analysis and code production
-	ReadChar();
+	ReadChar(); // Initialise
 	ArithmeticExpression();
-	ReadChar();
+	ReadChar(); // On lis le dernier charactère car normalement ca finit par END. mais si on s'est trompé
+				// et qu'on a mis END. par erreur ca dit que on a pas finit le code
 	// Trailer for the gcc assembler / linker
 	cout << "\tmovq %rbp, %rsp\t\t# Restore the position of the stack's top"<<endl;
 	cout << "\tret\t\t\t# Return from main function"<<endl;
