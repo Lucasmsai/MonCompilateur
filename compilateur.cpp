@@ -107,7 +107,6 @@ void ArithmeticExpression(void){
 			cout << "\tsubq	%rbx, %rax"<<endl;	// substract both operands
 		cout << "\tpush %rax"<<endl;			// store result
 	}
-
 }
 
 int main(void){	// First version : Source code on standard input and assembly code on standard output
