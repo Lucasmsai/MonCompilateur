@@ -24,11 +24,13 @@
 
 using namespace std;
 
-char current;				// Current car	
+char current;
+char before_current;				// Current car	
 
 void ReadChar(void){		// Read character and skip spaces until 
 				// non space character is read
 	while(cin.get(current) && (current==' '||current=='\t'||current=='\n'))
+		before_current = current;
 	   	cin.get(current);
 		// Lire des caractere en evitant les tabulation ou espace ou saut a la ligne
 }
@@ -113,12 +115,18 @@ char OpRel(void){
     char relop = current;
 	ReadChar();
     if(relop == '<' || relop == '>' || relop == '=' || relop == '!'){
+		ReadChar();
+		if(relop == '='){
+			ReadChar();
+			return relop;
+    	}
 		return relop;
     }
     else
         Error("Attendu > < = !");
     return '?';
 }
+
 // Exp := ExpA [opRel ExpA]
 
 void Exp(){
@@ -135,8 +143,18 @@ void Exp(){
 						break;
 			case '>' : cout << "\tja Vrais" << endl;
 						break;
-			case '=' : cout << "\tje Vrais" << endl;
+			case '=' : 
+				
+				switch (before_current){
+					case '=' :
+					case '!' :
+					case '>' :
+					case '<' :
+					default:
+						cout << "\tje Vrais" << endl;
 						break;
+				}
+				
 			case '!' : cout << "\tjne Vrais" << endl;
 						break;
             default: Error("operateur non existant");
