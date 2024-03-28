@@ -29,5 +29,14 @@ main:			# The main function body :
 	pop %rax
 	addq	%rbx, %rax
 	push %rax
+	push $2
+	pop %rax
+	pop %rbx
+	cmpq %rax, %rbx
+	je Vrais
+	push $0 	#Faux !
+	jmp FinExp
+Vrais:	push $-1 	#Vrais !
+FinExp:
 	movq %rbp, %rsp		# Restore the position of the stack's top
 	ret			# Return from main function

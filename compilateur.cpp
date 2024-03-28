@@ -109,6 +109,54 @@ void ArithmeticExpression(void){
 	}
 }
 
+char OpRel(void){
+    char relop = current;
+	ReadChar();
+    if(relop == '<' || relop == '>' || relop == '=' || relop == '!'){
+		return relop;
+    }
+    else
+        Error("Attendu > < = !");
+    return '?';
+}
+// Exp := ExpA [opRel ExpA]
+
+void Exp(){
+    char oprel;
+    ArithmeticExpression();
+    if(current == '<' || current == '>' || current == '=' || current == '!'){
+        oprel = OpRel();
+        ArithmeticExpression();
+		cout <<"\tpop %rax"<<endl; // On recupère le premier resultat
+		cout <<"\tpop %rbx"<<endl; // Le deuxieme
+		cout <<"\tcmpq %rax, %rbx"<<endl; // On compare
+        switch(oprel){
+            case '<' : cout << "\tjb Vrais" << endl;
+						break;
+			case '>' : cout << "\tja Vrais" << endl;
+						break;
+			case '=' : cout << "\tje Vrais" << endl;
+						break;
+			case '!' : cout << "\tjne Vrais" << endl;
+						break;
+            default: Error("operateur non existant");
+        }
+		cout << "\tpush $0 \t#Faux !"<< endl;
+		cout << "\tjmp FinExp" << endl;
+		cout << "Vrais:\tpush $-1 \t#Vrais !" << endl;
+		cout << "FinExp:" << endl;
+
+    }
+}
+
+
+
+
+
+
+
+
+
 int main(void){	// First version : Source code on standard input and assembly code on standard output
 	// Header for gcc assembler / linker
 	cout << "\t\t\t# This code was produced by the CERI Compiler"<<endl;
@@ -119,7 +167,7 @@ int main(void){	// First version : Source code on standard input and assembly co
 
 	// Let's proceed to the analysis and code production
 	ReadChar(); // Initialise
-	ArithmeticExpression();
+	Exp(); // remplacé par expression
 	ReadChar(); // On lis le dernier charactère car normalement ca finit par END. mais si on s'est trompé
 				// et qu'on a mis END. par erreur ca dit que on a pas finit le code
 	// Trailer for the gcc assembler / linker
